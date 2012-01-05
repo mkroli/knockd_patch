@@ -1,0 +1,59 @@
+diff -Nur a/src/knockd.c b/src/knockd.c
+--- a/src/knockd.c	2009-05-28 15:28:40.000000000 +0200
++++ b/src/knockd.c	2009-05-28 16:43:03.000000000 +0200
+@@ -556,23 +556,47 @@
+ 						door->seq_timeout = (time_t)atoi(ptr);
+ 						dprint("config: %s: seq_timeout: %d\n", door->name, door->seq_timeout);
+ 					} else if(!strcmp(key, "START_COMMAND") || !strcmp(key, "COMMAND")) {
+-						door->start_command = malloc(sizeof(char) * (strlen(ptr)+1));
++						char* offset;
+ 						if(door->start_command == NULL) {
+-							perror("malloc");
+-							exit(1);
++							door->start_command = malloc(sizeof(char) * (strlen(ptr)+1));
++							if(door->start_command == NULL) {
++								perror("malloc");
++								exit(1);
++							}
++							offset = door->start_command;
++						} else {
++							door->start_command = realloc(door->start_command, sizeof(char) * (strlen(door->start_command) + strlen(ptr) + 2));
++							if(door->start_command == NULL) {
++								perror("realloc");
++								exit(1);
++							}
++							door->start_command[strlen(door->start_command)] = ';';
++							offset = &(door->start_command[strlen(door->start_command)]);
+ 						}
+-						strcpy(door->start_command, ptr);
++						strcpy(offset, ptr);
+ 						dprint("config: %s: start_command: %s\n", door->name, door->start_command);
+ 					} else if(!strcmp(key, "CMD_TIMEOUT")) {
+ 						door->cmd_timeout = (time_t)atoi(ptr);
+ 						dprint("config: %s: cmd_timeout: %d\n", door->name, door->cmd_timeout);
+ 					} else if(!strcmp(key, "STOP_COMMAND")) {
+-						door->stop_command = malloc(sizeof(char) * (strlen(ptr)+1));
++						char* offset;
+ 						if(door->stop_command == NULL) {
+-							perror("malloc");
+-							exit(1);
++							door->stop_command = malloc(sizeof(char) * (strlen(ptr)+1));
++							if(door->stop_command == NULL) {
++								perror("malloc");
++								exit(1);
++							}
++							offset = door->stop_command;
++						} else {
++							door->stop_command = realloc(door->stop_command, sizeof(char) * (strlen(door->stop_command) + strlen(ptr) + 2));
++							if(door->stop_command == NULL) {
++								perror("realloc");
++								exit(1);
++							}
++							door->stop_command[strlen(door->stop_command)] = ';';
++							offset = &(door->stop_command[strlen(door->stop_command)]);
+ 						}
+-						strcpy(door->stop_command, ptr);
++						strcpy(offset, ptr);
+ 						dprint("config: %s: stop_command: %s\n", door->name, door->stop_command);
+ 					} else if(!strcmp(key, "TCPFLAGS")) {
+ 						char *flag;
